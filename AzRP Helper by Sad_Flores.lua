@@ -1,6 +1,6 @@
 script_name("AzRP Helper by Sad_Flores")
 script_author("Sad_Flores")
-script_version('1.1.b')
+script_version('1.2.b')
 
 require "lib.moonloader"
 
@@ -36,7 +36,7 @@ encoding.default = 'CP1251'
 u8 = encoding.UTF8
 
 local mapp = {
-	["Тюнинг"] = {
+	["РўСЋРЅРёРЅРі"] = {
 	1000,
 	1001,
 	1002,
@@ -348,9 +348,9 @@ function imgui.OnDrawFrame()
 		
 		imgui.BeginChild("menu", imgui.ImVec2(165, 400), true)
 		
-		if imgui.Button(u8"Основные настройки", imgui.ImVec2(-1, 25)) then menu = 1 end
-		if imgui.Button(u8"Центральный рынок", imgui.ImVec2(-1, 25)) then menu = 2 end
-		if imgui.Button(u8"Бинды и таймеры", imgui.ImVec2(-1, 25)) then menu = 3 end
+		if imgui.Button(u8"РћСЃРЅРѕРІРЅС‹Рµ РЅР°СЃС‚СЂРѕР№РєРё", imgui.ImVec2(-1, 25)) then menu = 1 end
+		if imgui.Button(u8"Р¦РµРЅС‚СЂР°Р»СЊРЅС‹Р№ СЂС‹РЅРѕРє", imgui.ImVec2(-1, 25)) then menu = 2 end
+		if imgui.Button(u8"Р‘РёРЅРґС‹ Рё С‚Р°Р№РјРµСЂС‹", imgui.ImVec2(-1, 25)) then menu = 3 end
 		
 		imgui.EndChild()
 		
@@ -364,10 +364,10 @@ function imgui.OnDrawFrame()
 				load_settings.settings.fast_connect_active = not load_settings.settings.fast_connect_active
 				inicfg.save(load_settings)
 				
-				notf.addNotification("FastConnect изменен!", 4, 2)
+				notf.addNotification("FastConnect РёР·РјРµРЅРµРЅ!", 4, 2)
 			end
 			imgui.SameLine()
-			imgui.TextQuestion(u8'Быстрое подключение к серверу при высоком онлайне.')
+			imgui.TextQuestion(u8'Р‘С‹СЃС‚СЂРѕРµ РїРѕРґРєР»СЋС‡РµРЅРёРµ Рє СЃРµСЂРІРµСЂСѓ РїСЂРё РІС‹СЃРѕРєРѕРј РѕРЅР»Р°Р№РЅРµ.')
 			
 			if imgui.Checkbox('AntiAfk', anti_afk_active) then
 				writeMemory(7634870, 1, 1, 1)
@@ -378,22 +378,22 @@ function imgui.OnDrawFrame()
 				load_settings.settings.anti_afk_active = not load_settings.settings.anti_afk_active
 				inicfg.save(load_settings)
 				
-				notf.addNotification("AntiAfk изменен!", 4, 2)
+				notf.addNotification("AntiAfk РёР·РјРµРЅРµРЅ!", 4, 2)
 			end
 			imgui.SameLine()
-			imgui.TextQuestion(u8'Отключение АФК при сворачивании игры.')
+			imgui.TextQuestion(u8'РћС‚РєР»СЋС‡РµРЅРёРµ РђР¤Рљ РїСЂРё СЃРІРѕСЂР°С‡РёРІР°РЅРёРё РёРіСЂС‹.')
 			
 			if imgui.Checkbox('AzRP Launcher(Emulator)', azrp_emu_active) then
-				notf.addNotification("Состоит в разработке!", 4, 2)
+				notf.addNotification("РЎРѕСЃС‚РѕРёС‚ РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ!", 4, 2)
 			end
 			imgui.SameLine()
-			imgui.TextQuestion(u8'Получаем бонусы от AzRP без лаунчера и нелегальной проверки твоей папки.')
+			imgui.TextQuestion(u8'РџРѕР»СѓС‡Р°РµРј Р±РѕРЅСѓСЃС‹ РѕС‚ AzRP Р±РµР· Р»Р°СѓРЅС‡РµСЂР° Рё РЅРµР»РµРіР°Р»СЊРЅРѕР№ РїСЂРѕРІРµСЂРєРё С‚РІРѕРµР№ РїР°РїРєРё.')
 
 			if imgui.Checkbox('AntiStealer', anti_stealer_active) then
-				notf.addNotification("Состоит в разработке!", 4, 2)
+				notf.addNotification("РЎРѕСЃС‚РѕРёС‚ РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ!", 4, 2)
 			end
 			imgui.SameLine()
-			imgui.TextQuestion(u8'Перехват всей отправки твоих данных на чужие сайты.')
+			imgui.TextQuestion(u8'РџРµСЂРµС…РІР°С‚ РІСЃРµР№ РѕС‚РїСЂР°РІРєРё С‚РІРѕРёС… РґР°РЅРЅС‹С… РЅР° С‡СѓР¶РёРµ СЃР°Р№С‚С‹.')
 			
 			if imgui.Checkbox('BufferCleaner', buffer_cleaner_active) then
 				local call1 = callFunction(0x53C500, 2, 2, true, true)
@@ -409,49 +409,49 @@ function imgui.OnDrawFrame()
 				load_settings.settings.buffer_cleaner_active = not load_settings.settings.buffer_cleaner_active
 				inicfg.save(load_settings)
 				
-				notf.addNotification("BufferCleaner изменен!", 4, 2)
+				notf.addNotification("BufferCleaner РёР·РјРµРЅРµРЅ!", 4, 2)
 			end
 			imgui.SameLine()
-			imgui.TextQuestion(u8'Очистка буффера памяти для минимализирования краша.')
+			imgui.TextQuestion(u8'РћС‡РёСЃС‚РєР° Р±СѓС„С„РµСЂР° РїР°РјСЏС‚Рё РґР»СЏ РјРёРЅРёРјР°Р»РёР·РёСЂРѕРІР°РЅРёСЏ РєСЂР°С€Р°.')
 			
 			if imgui.Checkbox('TuningFix', tuning_fix_active) then
 				load_settings.settings.tuning_fix_active = not load_settings.settings.tuning_fix_active
 				inicfg.save(load_settings)
 				
-				notf.addNotification("TuningFix изменен!", 4, 2)
+				notf.addNotification("TuningFix РёР·РјРµРЅРµРЅ!", 4, 2)
 			end
 			imgui.SameLine()
-			imgui.TextQuestion(u8'Исправление бага когда из-за тюнинга ТС кидает в разные стороны.')
+			imgui.TextQuestion(u8'РСЃРїСЂР°РІР»РµРЅРёРµ Р±Р°РіР° РєРѕРіРґР° РёР·-Р·Р° С‚СЋРЅРёРЅРіР° РўРЎ РєРёРґР°РµС‚ РІ СЂР°Р·РЅС‹Рµ СЃС‚РѕСЂРѕРЅС‹.')
 			
 			if imgui.Checkbox('FastLoad', fast_load_active) then
 				load_settings.settings.fast_load_active = not load_settings.settings.fast_load_active
 				inicfg.save(load_settings)
 				
-				notf.addNotification("FastLoad изменен!", 4, 2)
+				notf.addNotification("FastLoad РёР·РјРµРЅРµРЅ!", 4, 2)
 			end
 			imgui.SameLine()
-			imgui.TextQuestion(u8'Быстрая загрузка SA:MPa.')
+			imgui.TextQuestion(u8'Р‘С‹СЃС‚СЂР°СЏ Р·Р°РіСЂСѓР·РєР° SA:MPa.')
 			
 			if imgui.Checkbox('NewTab', new_tab_active) then
 
 
 			end
 			imgui.SameLine()
-			imgui.TextQuestion(u8'Новый и приятный TAB на imgui.')
+			imgui.TextQuestion(u8'РќРѕРІС‹Р№ Рё РїСЂРёСЏС‚РЅС‹Р№ TAB РЅР° imgui.')
 			
 			if imgui.Checkbox('NewChat', new_chat_active) then
 				
 				
 			end
 			imgui.SameLine()
-			imgui.TextQuestion(u8'Новый и приятный чат на imgui.')
+			imgui.TextQuestion(u8'РќРѕРІС‹Р№ Рё РїСЂРёСЏС‚РЅС‹Р№ С‡Р°С‚ РЅР° imgui.')
 			
 			if imgui.Checkbox('NewShowDialog', new_dialog_active) then
 
 
 			end
 			imgui.SameLine()
-			imgui.TextQuestion(u8'Новые и удобные диалоги на imgui.')
+			imgui.TextQuestion(u8'РќРѕРІС‹Рµ Рё СѓРґРѕР±РЅС‹Рµ РґРёР°Р»РѕРіРё РЅР° imgui.')
 			
 			imgui.EndChild()
 		end
@@ -460,7 +460,7 @@ function imgui.OnDrawFrame()
 		if menu == 2 then
 			imgui.BeginChild("central", imgui.ImVec2(665, 400), true)
 			
-			if imgui.Button(u8"Удалять игроков", imgui.ImVec2(-1, 25)) then 
+			if imgui.Button(u8"РЈРґР°Р»СЏС‚СЊ РёРіСЂРѕРєРѕРІ", imgui.ImVec2(-1, 25)) then 
 				central_del_player = true 
 				
 				for _, handle in ipairs(getAllChars()) do
@@ -472,30 +472,30 @@ function imgui.OnDrawFrame()
 						end
 					end
 				end
-				notf.addNotification("Игроки успешно удалены!", 4, 2)
+				notf.addNotification("РРіСЂРѕРєРё СѓСЃРїРµС€РЅРѕ СѓРґР°Р»РµРЅС‹!", 4, 2)
 			end
 			
-			if imgui.Button(u8"Удалять транспорт", imgui.ImVec2(-1, 25)) then 
+			if imgui.Button(u8"РЈРґР°Р»СЏС‚СЊ С‚СЂР°РЅСЃРїРѕСЂС‚", imgui.ImVec2(-1, 25)) then 
 				central_del_car = true 
 				for k, v in ipairs(getAllVehicles()) do
 					deleteCar(v)
 				end
-				notf.addNotification("Весь транспорт удален!", 4, 2)
+				notf.addNotification("Р’РµСЃСЊ С‚СЂР°РЅСЃРїРѕСЂС‚ СѓРґР°Р»РµРЅ!", 4, 2)
 			end
 			
-			if imgui.Button(u8"Вернуть игроков", imgui.ImVec2(-1, 25)) then 
+			if imgui.Button(u8"Р’РµСЂРЅСѓС‚СЊ РёРіСЂРѕРєРѕРІ", imgui.ImVec2(-1, 25)) then 
 				central_del_player = false 
 				for i = 1, #npc do
 					print(npc, i, npc[i])
 					send_player_stream(npc[i], infnpc[npc[i]])
 					npc[i] = nil
 				end
-				notf.addNotification("Игроки возвращены, удаление отключено!", 4, 2)
+				notf.addNotification("РРіСЂРѕРєРё РІРѕР·РІСЂР°С‰РµРЅС‹, СѓРґР°Р»РµРЅРёРµ РѕС‚РєР»СЋС‡РµРЅРѕ!", 4, 2)
 			end
 			
-			if imgui.Button(u8"Не удалять транспорт", imgui.ImVec2(-1, 25)) then 
+			if imgui.Button(u8"РќРµ СѓРґР°Р»СЏС‚СЊ С‚СЂР°РЅСЃРїРѕСЂС‚", imgui.ImVec2(-1, 25)) then 
 				central_del_car = false 
-				notf.addNotification("Удаление транспорта отключено!", 4, 2)
+				notf.addNotification("РЈРґР°Р»РµРЅРёРµ С‚СЂР°РЅСЃРїРѕСЂС‚Р° РѕС‚РєР»СЋС‡РµРЅРѕ!", 4, 2)
 			end
 			imgui.EndChild()
 		end
@@ -514,11 +514,13 @@ end
 function main()
 	while not isSampAvailable() do wait(0) end
 	
-	autoupdate("https://raw.githubusercontent.com/K1NDER-ai/AzRPHelper/master/version.json", '['..string.upper(thisScript().name)..']: ', "https://raw.githubusercontent.com/K1NDER-ai/AzRPHelper/master/version.json")
-	
 	inicfg.save(load_settings)
-	
+	local time = os.clock() + 300
 	while true do
+		if time < os.clock() then
+			autoupdate("https://raw.githubusercontent.com/K1NDER-ai/AzRPHelper/master/version.json", '['..string.upper(thisScript().name)..']: ', "https://raw.githubusercontent.com/K1NDER-ai/AzRPHelper/master/version.json")
+			time = os.clock() + 300
+		end
 		if load_settings.settings.buffer_cleaner_active == true and memory.read(0x8E4CB4, 4, true) > 419430400 then
 			local call1 = callFunction(0x53C500, 2, 2, true, true)
 			local call2 = callFunction(0x53C810, 1, 1, true)
@@ -630,7 +632,7 @@ end
 
 function filt(model)
 	if central_del_car == true then
-		FIND(model, "Тюнинг") 
+		FIND(model, "РўСЋРЅРёРЅРі") 
 	end
     return false
 end
@@ -878,21 +880,20 @@ function autoupdate(json_url, prefix, url)
               lua_thread.create(function(prefix)
                 local dlstatus = require('moonloader').download_status
                 local color = -1
-                sampAddChatMessage((prefix..'Обнаружено обновление. Пытаюсь обновиться c '..thisScript().version..' на '..updateversion), color)
+				notf.addNotification("РћР±РЅР°СЂСѓР¶РµРЅРѕ РѕР±РЅРѕРІР»РµРЅРёРµ. РџС‹С‚Р°СЋСЃСЊ РѕР±РЅРѕРІРёС‚СЊСЃСЏ!", 4, 2)
                 wait(250)
                 downloadUrlToFile(updatelink, thisScript().path,
                   function(id3, status1, p13, p23)
                     if status1 == dlstatus.STATUS_DOWNLOADINGDATA then
-                      print(string.format('Загружено %d из %d.', p13, p23))
+                      print(string.format('Р—Р°РіСЂСѓР¶РµРЅРѕ %d РёР· %d.', p13, p23))
                     elseif status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
-                      print('Загрузка обновления завершена.')
-                      sampAddChatMessage((prefix..'Обновление завершено!'), color)
+                      notf.addNotification("Р—Р°РіСЂСѓР·РєР° РѕР±РЅРѕРІР»РµРЅРёСЏ Р·Р°РІРµСЂС€РµРЅР°!", 4, 2)
                       goupdatestatus = true
                       lua_thread.create(function() wait(500) thisScript():reload() end)
                     end
                     if status1 == dlstatus.STATUSEX_ENDDOWNLOAD then
                       if goupdatestatus == nil then
-                        sampAddChatMessage((prefix..'Обновление прошло неудачно. Запускаю устаревшую версию..'), color)
+						notf.addNotification("РћР±РЅРѕРІР»РµРЅРёРµ РїСЂРѕС€Р»Рѕ РЅРµСѓРґР°С‡РЅРѕ. Р—Р°РїСѓСЃРєР°СЋ СѓСЃС‚Р°СЂРµРІС€СѓСЋ РІРµСЂСЃРёСЋ.", 4, 2)
                         update = false
                       end
                     end
@@ -902,15 +903,14 @@ function autoupdate(json_url, prefix, url)
               )
             else
               update = false
-              print('v'..thisScript().version..': Обновление не требуется.')
             end
           end
         else
-          print('v'..thisScript().version..': Не могу проверить обновление. Смиритесь или проверьте самостоятельно на '..url)
           update = false
         end
       end
     end
   )
   while update ~= false do wait(100) end
+end
 end
