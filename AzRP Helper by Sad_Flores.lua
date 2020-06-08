@@ -1,0 +1,1662 @@
+-- Некоторый функционал я взял у других разработчиков.
+-- Binder: MultiBinder, автора так и не нашел, но спасибо тебе.
+-- Автообновление: Спасибо Orlik.
+-- Инфо-бар(собейтовская полоска): Спасибо автору который открыл исходный код Project by Cover.
+-- imgui_notf(всплывающие уведомления): Благодарю тебя DonHomka, one love :з.
+-- ARZ Assistant Custom Tab(новый TAB на imgui): Спасибо ronnyscripts, твой скрипт стоит в автозагрузке если юзер включит NewTab.
+-- Спасибо всем, чьи функции я взял к себе в скрипт, я посчитал их необходимыми для этого.
+
+-- Моя вторая хоть и не законченная работа на .lua, чем дальше тем круче.
+
+script_name("AzRP Helper by Sad_Flores")
+script_author("Sad_Flores")
+script_version('1.8.R')
+
+require "lib.moonloader"
+
+local imgui = require 'imgui'
+local encoding = require 'encoding'
+
+local samp = require 'samp.events'
+local sampev = require 'lib.samp.events'
+
+local bNotf, notf = pcall(import, "imgui_notf.lua")
+
+local memory = require 'memory'
+local inicfg = require 'inicfg'
+
+local Matrix3X3 = require 'matrix3x3'
+local Vector3D = require 'vector3d'
+
+local basexx   = require 'basexx'
+local band     = bit.band
+local sha1     = require 'sha1'
+
+local key = require 'vkeys'
+
+local servers = 
+{
+	"185.169.134.3", 
+	"185.169.134.4",
+	"185.169.134.43",
+	"185.169.134.44",
+	"185.169.134.45",
+	"185.169.134.5",
+	"185.169.134.59",
+	"185.169.134.61",
+	"185.169.134.107"
+}
+
+
+local bind_path = getWorkingDirectory() .. '/AzRP Helper by Sad_Flores/binder.ini'
+local bind_folder = getWorkingDirectory() .. '/AzRP Helper by Sad_Flores'
+local bind_slot = 40 -- Слоты биндера (РЕАЛИЗАЦИЯ ХУЙНЯ ПОТОМ ПЕРЕДЕЛАТЬ)!!!!!
+
+if not doesDirectoryExist(bind_folder) then
+	createDirectory(bind_folder)
+end
+
+if not doesFileExist(bind_path) then
+	f = io.open(bind_path, 'a')
+	for i=1, bind_slot do
+		f:write("[".. i .."]\n")
+	end
+	f:write("1=")
+	f:close()
+end
+
+local main_binder = inicfg.load(nil, bind_path)
+
+about_bind = {}
+binder_text = {}
+binder_text[1] = imgui.ImBuffer(1024) -- multiline
+binder_text[2] = imgui.ImBuffer(192) -- активация команда
+binder_text[3] = imgui.ImBuffer(16) -- задержка
+selected_item_binder = imgui.ImInt(0)
+cb_render_in_menu = imgui.ImBool(imgui.RenderInMenu)
+cb_lock_player = imgui.ImBool(imgui.LockPlayer)
+cb_show_cursor = imgui.ImBool(imgui.ShowCursor)
+local wmine = 700
+
+
+local load_settings = inicfg.load(
+{
+	settings =
+	{
+		fast_connect_active = true,
+		anti_afk_active = false,
+		azrp_emu_active = false,
+		anti_stealer_active = true,
+		buffer_cleaner_active = true,
+		tuning_fix_active = true,
+		fast_load_active = true,
+		new_tab_active = false,
+		auto_eat = true,
+		status_bar_active = false
+	},
+	settings_script =
+	{
+		activate_script = "4"
+	},
+	auto_login = 
+	{
+		passwd = "0",
+		google = "0",
+		ip = "0"
+	}
+})
+
+
+encoding.default = 'CP1251' 
+u8 = encoding.UTF8
+
+local mapp = {
+	["Тюнинг"] = {
+	1000,
+	1001,
+	1002,
+	1003,
+	1004,
+	1005,
+	1006,
+	1007,
+	1011,
+	1012,
+	1013,
+	1014,
+	1015,
+	1016,
+	1017,
+	1018,
+	1019,
+	1020,
+	1021,
+	1022,
+	1023,
+	1024,
+	1025,
+	1026,
+	1027,
+	1028,
+	1029,
+	1030,
+	1031,
+	1032,
+	1033,
+	1034,
+	1035,
+	1036,
+	1037,
+	1038,
+	1039,
+	1040,
+	1041,
+	1042,
+	1043,
+	1044,
+	1045,
+	1046,
+	1047,
+	1048,
+	1049,
+	1050,
+	1051,
+	1052,
+	1053,
+	1054,
+	1055,
+	1056,
+	1057,
+	1058,
+	1059,
+	1060,
+	1061,
+	1062,
+	1063,
+	1064,
+	1065,
+	1066,
+	1067,
+	1068,
+	1069,
+	1070,
+	1071,
+	1072,
+	1073,
+	1074,
+	1075,
+	1076,
+	1077,
+	1078,
+	1079,
+	1080,
+	1081,
+	1082,
+	1083,
+	1084,
+	1085,
+	1088,
+	1089,
+	1090,
+	1091,
+	1092,
+	1093,
+	1094,
+	1095,
+	1096,
+	1097,
+	1098,
+	1099,
+	1100,
+	1101,
+	1102,
+	1103,
+	1104,
+	1105,
+	1106,
+	1107,
+	1108,
+	1110,
+	1111,
+	1112,
+	1113,
+	1114,
+	1115,
+	1116,
+	1117,
+	1118,
+	1119,
+	1120,
+	1121,
+	1122,
+	1123,
+	1124,
+	1125,
+	1126,
+	1127,
+	1128,
+	1129,
+	1130,
+	1131,
+	1132,
+	1133,
+	1134,
+	1135,
+	1136,
+	1137,
+	1138,
+	1139,
+	1140,
+	1141,
+	1142,
+	1143,
+	1144,
+	1145,
+	1146,
+	1147,
+	1148,
+	1149,
+	1150,
+	1151,
+	1152,
+	1153,
+	1154,
+	1155,
+	1156,
+	1157,
+	1158,
+	1159,
+	1160,
+	1161,
+	1162,
+	1163,
+	1164,
+	1165,
+	1166,
+	1167,
+	1168,
+	1169,
+	1170,
+	1171,
+	1172,
+	1173,
+	1174,
+	1175,
+	1176,
+	1177,
+	1178,
+	1179,
+	1180,
+	1181,
+	1182,
+	1183,
+	1184,
+	1185,
+	1186,
+	1187,
+	1188,
+	1189,
+	1190,
+	1191,
+	1192,
+	1193,
+	1327
+    }
+}
+
+function apply_custom_style()
+   imgui.SwitchContext()
+   local style = imgui.GetStyle()
+   local colors = style.Colors
+   local clr = imgui.Col
+   local ImVec4 = imgui.ImVec4
+   local ImVec2 = imgui.ImVec2
+
+    style.WindowPadding = ImVec2(15, 15)
+    style.WindowRounding = 15.0
+    style.FramePadding = ImVec2(5, 5)
+    style.ItemSpacing = ImVec2(12, 8)
+    style.ItemInnerSpacing = ImVec2(8, 6)
+    style.IndentSpacing = 25.0
+    style.ScrollbarSize = 15.0
+    style.ScrollbarRounding = 15.0
+    style.GrabMinSize = 15.0
+    style.GrabRounding = 7.0
+    style.ChildWindowRounding = 8.0
+    style.FrameRounding = 6.0
+  
+
+      colors[clr.Text] = ImVec4(0.95, 0.96, 0.98, 1.00)
+      colors[clr.TextDisabled] = ImVec4(0.36, 0.42, 0.47, 1.00)
+      colors[clr.WindowBg] = ImVec4(0.11, 0.15, 0.17, 1.00)
+      colors[clr.ChildWindowBg] = ImVec4(0.15, 0.18, 0.22, 1.00)
+      colors[clr.PopupBg] = ImVec4(0.08, 0.08, 0.08, 0.94)
+      colors[clr.Border] = ImVec4(0.43, 0.43, 0.50, 0.50)
+      colors[clr.BorderShadow] = ImVec4(0.00, 0.00, 0.00, 0.00)
+      colors[clr.FrameBg] = ImVec4(0.20, 0.25, 0.29, 1.00)
+      colors[clr.FrameBgHovered] = ImVec4(0.12, 0.20, 0.28, 1.00)
+      colors[clr.FrameBgActive] = ImVec4(0.09, 0.12, 0.14, 1.00)
+      colors[clr.TitleBg] = ImVec4(0.09, 0.12, 0.14, 0.65)
+      colors[clr.TitleBgCollapsed] = ImVec4(0.00, 0.00, 0.00, 0.51)
+      colors[clr.TitleBgActive] = ImVec4(0.08, 0.10, 0.12, 1.00)
+      colors[clr.MenuBarBg] = ImVec4(0.15, 0.18, 0.22, 1.00)
+      colors[clr.ScrollbarBg] = ImVec4(0.02, 0.02, 0.02, 0.39)
+      colors[clr.ScrollbarGrab] = ImVec4(0.20, 0.25, 0.29, 1.00)
+      colors[clr.ScrollbarGrabHovered] = ImVec4(0.18, 0.22, 0.25, 1.00)
+      colors[clr.ScrollbarGrabActive] = ImVec4(0.09, 0.21, 0.31, 1.00)
+      colors[clr.ComboBg] = ImVec4(0.20, 0.25, 0.29, 1.00)
+      colors[clr.CheckMark] = ImVec4(0.28, 0.56, 1.00, 1.00)
+      colors[clr.SliderGrab] = ImVec4(0.28, 0.56, 1.00, 1.00)
+      colors[clr.SliderGrabActive] = ImVec4(0.37, 0.61, 1.00, 1.00)
+      colors[clr.Button] = ImVec4(0.20, 0.25, 0.29, 1.00)
+      colors[clr.ButtonHovered] = ImVec4(0.28, 0.56, 1.00, 1.00)
+      colors[clr.ButtonActive] = ImVec4(0.06, 0.53, 0.98, 1.00)
+      colors[clr.Header] = ImVec4(0.20, 0.25, 0.29, 0.55)
+      colors[clr.HeaderHovered] = ImVec4(0.26, 0.59, 0.98, 0.80)
+      colors[clr.HeaderActive] = ImVec4(0.26, 0.59, 0.98, 1.00)
+      colors[clr.ResizeGrip] = ImVec4(0.26, 0.59, 0.98, 0.25)
+      colors[clr.ResizeGripHovered] = ImVec4(0.26, 0.59, 0.98, 0.67)
+      colors[clr.ResizeGripActive] = ImVec4(0.06, 0.05, 0.07, 1.00)
+      colors[clr.CloseButton] = ImVec4(0.40, 0.39, 0.38, 0.16)
+      colors[clr.CloseButtonHovered] = ImVec4(0.40, 0.39, 0.38, 0.39)
+      colors[clr.CloseButtonActive] = ImVec4(0.40, 0.39, 0.38, 1.00)
+      colors[clr.PlotLines] = ImVec4(0.61, 0.61, 0.61, 1.00)
+      colors[clr.PlotLinesHovered] = ImVec4(1.00, 0.43, 0.35, 1.00)
+      colors[clr.PlotHistogram] = ImVec4(0.90, 0.70, 0.00, 1.00)
+      colors[clr.PlotHistogramHovered] = ImVec4(1.00, 0.60, 0.00, 1.00)
+      colors[clr.TextSelectedBg] = ImVec4(0.25, 1.00, 0.00, 0.43)
+      colors[clr.ModalWindowDarkening] = ImVec4(1.00, 0.98, 0.95, 0.73)
+end
+apply_custom_style()
+
+local test_text_buffer = imgui.ImBuffer(256)
+local main_window_state = imgui.ImBool(false)
+
+local status_bar_active = imgui.ImBool(load_settings.settings.status_bar_active)
+local fast_connect_active = imgui.ImBool(load_settings.settings.fast_connect_active)
+local anti_afk_active = imgui.ImBool(load_settings.settings.anti_afk_active)
+local azrp_emu_active = imgui.ImBool(load_settings.settings.azrp_emu_active)
+local anti_stealer_active = imgui.ImBool(load_settings.settings.anti_stealer_active)
+local buffer_cleaner_active = imgui.ImBool(load_settings.settings.buffer_cleaner_active)
+local tuning_fix_active = imgui.ImBool(load_settings.settings.tuning_fix_active)
+local fast_load_active = imgui.ImBool(load_settings.settings.fast_load_active)
+local new_tab_active = imgui.ImBool(false)
+local auto_eat = imgui.ImBool(load_settings.settings.auto_eat)
+
+local delete_players = imgui.ImBool(false)
+local delete_cars = imgui.ImBool(false)
+
+local central_del_car = false
+local central_del_player = false
+
+local npc, infnpc = {}, {}
+local car, infcar = {}, {}
+
+local tab_downloading = true
+
+local text_buffer = imgui.ImBuffer(100)
+local passwd = imgui.ImBuffer(64)
+local g_auth = imgui.ImBuffer(100)
+
+local bind_buffer = {}
+
+
+local function send_player_stream(id, i)
+	if i then
+		local bs = raknetNewBitStream()
+		raknetBitStreamWriteInt16(bs, id)
+		raknetBitStreamWriteInt8(bs, i[1])
+		raknetBitStreamWriteInt32(bs, i[2])
+		raknetBitStreamWriteFloat(bs, i[3].x)
+		raknetBitStreamWriteFloat(bs, i[3].y)
+		raknetBitStreamWriteFloat(bs, i[3].z)
+		raknetBitStreamWriteFloat(bs, i[4])
+		raknetBitStreamWriteInt32(bs, i[5])
+		raknetBitStreamWriteInt8(bs, i[6])
+		raknetEmulRpcReceiveBitStream(32, bs)
+	end
+end
+
+function imgui.TextQuestion(text)
+    imgui.TextDisabled('(?)')
+    if imgui.IsItemHovered() then
+        imgui.BeginTooltip()
+        imgui.PushTextWrapPos(450)
+        imgui.TextUnformatted(text)
+        imgui.PopTextWrapPos()
+        imgui.EndTooltip()
+    end
+end
+
+function myposition()
+    local positionX, positionY, positionZ = getCharCoordinates(PLAYER_PED)
+    local str = positionX .. ", " .. positionY .. ", " .. positionZ
+    return str
+end
+
+function func_change_status(name, num, status)
+	if status then
+		if name == "DeletePlayer`s" or name == "DeleteCar`s" then
+			monitoring_func[num] = '[{FF0000}'..name..'{FFFFFF}]'
+		else
+			monitoring_func[num] = '[{FF8C00}'..name..'{FFFFFF}]'
+		end
+	else
+		monitoring_func[num] = '['..name..']'
+	end
+end
+
+function genCode(skey)
+	skey = basexx.from_base32(skey)
+	value = math.floor(os.time() / 30)
+	value = string.char(
+	0, 0, 0, 0,
+	band(value, 0xFF000000) / 0x1000000,
+	band(value, 0xFF0000) / 0x10000,
+	band(value, 0xFF00) / 0x100,
+	band(value, 0xFF))
+	local hash = sha1.hmac_binary(skey, value)
+	local offset = band(hash:sub(-1):byte(1, 1), 0xF)
+	local function bytesToInt(a,b,c,d)
+	return a*0x1000000 + b*0x10000 + c*0x100 + d
+	end
+	hash = bytesToInt(hash:byte(offset + 1, offset + 4))
+	hash = band(hash, 0x7FFFFFFF) % 1000000
+	return ('%06d'):format(hash)
+end
+
+monitoring_func =
+{
+	[0] = '[FastConnect]', '[AntiAfk]', '[BufferCleaner]', '[TuningFix]', '[FastLoad]', '[DeletePlayer`s]', '[DeleteCar`s]', '[AutoEat]',
+}
+
+function ShowHelpMarker(text)
+	imgui.SameLine()
+    imgui.TextDisabled("(?)")
+    if (imgui.IsItemHovered()) then
+        imgui.SetTooltip(text)
+    end
+end
+
+function ShowCenterTextColor(text, wsize, color)
+	imgui.SetCursorPosX((wsize / 2) - (imgui.CalcTextSize(text).x / 2))
+	imgui.TextColored(color, text)
+end
+
+function ShowCenterText(text, wsize)
+	imgui.SetCursorPosX((wsize / 2) - (imgui.CalcTextSize(text).x / 2))
+	imgui.TextColored(imgui.ImVec4(0.4, 0.8, 0.3, 1.0), text)
+end
+
+function getDownKeys()
+    local curkeys = ""
+    local bool = false
+    for k, v in pairs(key) do
+        if isKeyDown(v) and (v == VK_MENU or v == VK_CONTROL or v == VK_SHIFT or v == VK_LMENU or v == VK_RMENU or v == VK_RCONTROL or v == VK_LCONTROL or v == VK_LSHIFT or v == VK_RSHIFT) then
+            if v ~= VK_MENU and v ~= VK_CONTROL and v ~= VK_SHIFT then
+                curkeys = v
+            end
+        end
+    end
+    for k, v in pairs(key) do
+        if isKeyDown(v) and (v ~= VK_MENU and v ~= VK_CONTROL and v ~= VK_SHIFT and v ~= VK_LMENU and v ~= VK_RMENU and v ~= VK_RCONTROL and v ~= VK_LCONTROL and v ~= VK_LSHIFT and v ~= VK_RSHIFT) then
+            if tostring(curkeys):len() == 0 then
+                curkeys = v
+            else
+                curkeys = curkeys .. " " .. v
+            end
+            bool = true
+        end
+    end
+    return curkeys, bool
+end
+
+function getDownKeysText()
+	tKeys = string.split(getDownKeys(), " ")
+	if #tKeys ~= 0 then
+		for i = 1, #tKeys do
+			if i == 1 then
+				str = key.id_to_name(tonumber(tKeys[i]))
+			else
+				str = str .. "+" .. key.id_to_name(tonumber(tKeys[i]))
+			end
+		end
+		return str
+	else
+		return "None"
+	end
+end
+
+function isReservedCommand(command)
+	ArrRCommand = {"binder"}
+	for i = 1, #ArrRCommand do
+		if command == ArrRCommand[i] then
+			return true
+		end
+	end
+	return false
+end
+
+function main_draw_box()
+	if load_settings.settings.status_bar_active then
+		func_change_status("FastConnect", 0, load_settings.settings.fast_connect_active)
+		func_change_status("AntiAfk", 1, load_settings.settings.anti_afk_active)
+		func_change_status("BufferCleaner", 2, load_settings.settings.buffer_cleaner_active)
+		func_change_status("TuningFix", 3, load_settings.settings.tuning_fix_active)
+		func_change_status("FastLoad", 4, load_settings.settings.fast_load_active)
+		func_change_status("DeletePlayer`s", 5, central_del_player)
+		func_change_status("DeleteCar`s", 6, central_del_car)
+		func_change_status("AutoEat", 7, load_settings.settings.auto_eat)
+
+		local resX, resY = getScreenResolution()
+		renderDrawBoxWithBorder(-2, resY - 30, resX + 3, 30, 0xBF191919, 2, 0xFF000000) 
+		renderFontDrawText(font, string.format(''..monitoring_func[0]..' '..monitoring_func[1]..' '..monitoring_func[2]..' '..monitoring_func[3]..' '..monitoring_func[4]..' '..monitoring_func[5]..' '..monitoring_func[6]..' '..monitoring_func[7]..' {FF0000}ДАННЫЙ СКРИПТ НЕ ЯВЛЯЕТСЯ ЧИТОМ!{FFFFFF}'), 5, (resY - 30) + 7, 0xFFFFFFFF)
+	end
+end
+
+function imgui.OnDrawFrame()
+	local resX, resY = getScreenResolution()
+
+	if main_window_state.v == true then
+		imgui.ShowCursor = true
+	elseif main_window_state.v == false then
+		imgui.ShowCursor = false
+		imgui.SetMouseCursor(imgui.MouseCursor.None)
+	end
+	
+	if main_window_state.v then
+		imgui.SetNextWindowPos(imgui.ImVec2(resX / 2, resY / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
+		imgui.SetNextWindowSize(imgui.ImVec2(870, 460), imgui.Cond.FirstUseEver)
+		
+		imgui.Begin(u8'AzRP Helper | Sad_Flores', imgui.WindowFlags.NoCollapse, imgui.WindowFlags.NoResize)
+		
+		imgui.BeginChild("menu", imgui.ImVec2(165, 400), true)
+		
+		if imgui.Button(u8"Основные настройки", imgui.ImVec2(-1, 25)) then menu = 1 end
+		if imgui.Button(u8"Бинды и таймеры", imgui.ImVec2(-1, 25)) then menu = 2 end
+		if imgui.Button(u8"Информация", imgui.ImVec2(-1, 25)) then menu = 3 end
+		
+		imgui.EndChild()
+		
+		imgui.SameLine()
+		if menu == 1 then
+			imgui.BeginChild("basic", imgui.ImVec2(665, 400), true)
+			
+			if imgui.Checkbox('FastConnect', fast_connect_active) then
+				memory.fill(sampGetBase() + 0x2D3C45, 0, 2, true)
+	
+				load_settings.settings.fast_connect_active = not load_settings.settings.fast_connect_active
+				inicfg.save(load_settings)
+				
+				notf.addNotification("FastConnect изменен!", 4, 2)
+			end
+			imgui.SameLine()
+			imgui.TextQuestion(u8'Быстрое подключение к серверу при высоком онлайне.')
+			imgui.SameLine()
+			
+			if imgui.Checkbox('InfoBar', status_bar_active) then
+				load_settings.settings.status_bar_active = not load_settings.settings.status_bar_active
+				inicfg.save(load_settings)
+				
+				notf.addNotification("InfoBar изменен!", 4, 2)
+			end
+			ShowHelpMarker(u8'Собейтовская полоска снизу.')
+			
+			if imgui.Checkbox('AntiAfk', anti_afk_active) then
+				writeMemory(7634870, 1, 1, 1)
+				writeMemory(7635034, 1, 1, 1)
+				memory.fill(7623723, 144, 8)
+				memory.fill(5499528, 144, 6)
+				
+				load_settings.settings.anti_afk_active = not load_settings.settings.anti_afk_active
+				inicfg.save(load_settings)
+				
+				notf.addNotification("AntiAfk изменен!", 4, 2)
+			end
+			imgui.SameLine()
+			ShowHelpMarker('Отключение АФК при сворачивании игры.')
+			
+			if imgui.Checkbox('AzRP Launcher(Emulator)', azrp_emu_active) then
+				notf.addNotification("Состоит в разработке!", 4, 2)
+			end
+			imgui.SameLine()
+			imgui.TextQuestion(u8'Получаем бонусы от AzRP без лаунчера и нелегальной проверки твоей папки.')
+
+			if imgui.Checkbox('AntiStealer', anti_stealer_active) then
+				notf.addNotification("Состоит в разработке!", 4, 2)
+			end
+			imgui.SameLine()
+			imgui.TextQuestion(u8'Перехват всей отправки твоих данных на чужие сайты.')
+			
+			if imgui.Checkbox('BufferCleaner', buffer_cleaner_active) then
+				local call1 = callFunction(0x53C500, 2, 2, true, true)
+				local call2 = callFunction(0x53C810, 1, 1, true)
+				local call3 = callFunction(0x40CF80, 0, 0)
+				local call4 = callFunction(0x4090A0, 0, 0)
+				local call5 = callFunction(0x5A18B0, 0, 0)
+				local call6 = callFunction(0x707770, 0, 0)
+				local pX, pY, pZ = getCharCoordinates(PLAYER_PED)
+				requestCollision(pX, pY)
+				loadScene(pX, pY, pZ)
+				
+				load_settings.settings.buffer_cleaner_active = not load_settings.settings.buffer_cleaner_active
+				inicfg.save(load_settings)
+				
+				notf.addNotification("BufferCleaner изменен!", 4, 2)
+			end
+			imgui.SameLine()
+			imgui.TextQuestion(u8'Очистка буффера памяти для минимализирования краша.')
+			
+			if imgui.Checkbox('TuningFix', tuning_fix_active) then
+				load_settings.settings.tuning_fix_active = not load_settings.settings.tuning_fix_active
+				inicfg.save(load_settings)
+				
+				notf.addNotification("TuningFix изменен!", 4, 2)
+			end
+			imgui.SameLine()
+			imgui.TextQuestion(u8'Исправление бага когда из-за тюнинга ТС кидает в разные стороны.')
+			
+			if imgui.Checkbox('FastLoad', fast_load_active) then
+				load_settings.settings.fast_load_active = not load_settings.settings.fast_load_active
+				inicfg.save(load_settings)
+				
+				notf.addNotification("FastLoad изменен!", 4, 2)
+			end
+			imgui.SameLine()
+			imgui.TextQuestion(u8'Быстрая загрузка SA:MPa.')
+			
+			if imgui.Checkbox('NewTab', new_tab_active) then
+				if tab_downloading == true then
+					local dlstatus = require('moonloader').download_status
+					local file_path = getWorkingDirectory() .. '/ARZ_Assistant_Custom_Tab.lua'
+					downloadUrlToFile("https://raw.githubusercontent.com/K1NDER-ai/AzRPHelper/master/ARZ_Assistant_Custom_Tab.lua", file_path,
+					function(id3, status1, p13, p23)
+						if status1 == dlstatus.STATUS_DOWNLOADINGDATA then
+							notf.addNotification(string.format('Загружено %d из %d.', p13, p23), 4, 2)
+						elseif status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
+							notf.addNotification("Загрузка завершена!", 4, 2)
+							lua_thread.create(function() wait(500) reloadScripts() end)
+						end
+					end
+					)
+				elseif tab_downloading == false then
+					local file_path = getWorkingDirectory() .. '/ARZ_Assistant_Custom_Tab.lua'
+					os.remove(file_path)
+					notf.addNotification("NewTab был успешно удален!", 4, 2)
+					lua_thread.create(function() wait(500) reloadScripts() end)
+				end
+			end
+			imgui.SameLine()
+			imgui.TextQuestion(u8'Новый и приятный TAB на imgui(Будет произведена автоматическая загрузка доп.компонентов).')
+			
+			if imgui.Checkbox('DeletePlayer`s', delete_players) then
+				central_del_player = not central_del_player
+				
+				for _, handle in ipairs(getAllChars()) do
+					if doesCharExist(handle) then
+						local _, id = sampGetPlayerIdByCharHandle(handle)
+						if id ~= myid then
+							emul_rpc('onPlayerStreamOut', { id })
+							npc[#npc + 1] = id
+						end
+					end
+				end
+				
+				if central_del_player == false then
+					for i = 1, #npc do
+						send_player_stream(npc[i], infnpc[npc[i]])
+						npc[i] = nil
+					end
+				end
+				notf.addNotification("DeletePlayer`s изменен!", 4, 2)
+			end
+			imgui.SameLine()
+			imgui.TextQuestion(u8'Удаляет и после блокирует игроков в зоне стрима(Возможен бан за коллизию).')
+			
+			if imgui.Checkbox('DeleteCar`s', delete_cars) then
+				central_del_car = not central_del_car
+				
+				for k, v in ipairs(getAllVehicles()) do
+					deleteCar(v)
+				end
+				notf.addNotification("DeleteCar`s изменен!", 4, 2)
+			end
+			imgui.SameLine()
+			imgui.TextQuestion(u8'Удаляет а после блокирует транспорт в зоне стрима(Возможен бан за коллизию).')
+			
+			if imgui.Checkbox('AutoEat', auto_eat) then
+				load_settings.settings.auto_eat = not load_settings.settings.auto_eat
+				inicfg.save(load_settings)
+				
+				notf.addNotification("AutoEat изменен!", 4, 2)
+			end
+			imgui.SameLine()
+			imgui.TextQuestion(u8'При низком уровне голода скрипт использует чипсы или оленину.')
+			
+			imgui.Separator()
+			imgui.Text(u8"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tДругие функции")
+			
+			imgui.Text(u8"AutoLogin(+Google Auth)")
+			
+			imgui.PushItemWidth(110) 
+			imgui.InputText(u8'Пароль', passwd)
+			imgui.PopItemWidth()
+			
+			imgui.SameLine()
+			
+			imgui.PushItemWidth(200) 
+			imgui.InputText(u8'Google Auth', g_auth)
+			imgui.PopItemWidth()
+			
+			if imgui.Button(u8"Сохранить", imgui.ImVec2(77, 0)) then
+				load_settings.auto_login.passwd = u8:decode(passwd.v)
+				load_settings.auto_login.google = u8:decode(g_auth.v)
+				
+				local ip, port = sampGetCurrentServerAddress()
+				load_settings.auto_login.ip = ip
+				inicfg.save(load_settings)
+			end
+			
+			imgui.EndChild()
+		end
+		
+		imgui.SameLine()
+		if menu == 2 then
+			if change_binder ~= nil and change_binder ~= "" then
+				imgui.BeginChild("basic", imgui.ImVec2(665, 400), true)
+					imgui.SetCursorPosY(5)
+					ShowCenterTextColor(u8("\t\t\t\t\t\tРедакторивание профиля биндера (Слот №" .. change_binder .. ")"), wmine-200, imgui.ImVec4(0.8, 0.7, 0.1, 1.0))
+					imgui.Separator()
+
+					if not is_changeact then
+						if selected_item_binder.v == 0 then
+							imgui.BeginChild("change", imgui.ImVec2(118, 20), true)
+							imgui.SetCursorPosY(2)
+							imgui.TextColored(imgui.ImVec4(1.0, 1.0, 0.7, 1.0), getDownKeysText())
+							imgui.EndChild()
+							imgui.SameLine()
+							imgui.SetCursorPosY(37)
+							imgui.Text(u8"Зажмите клавишу/комбинацию клавиш и нажмите")
+							imgui.SameLine()
+							imgui.SetCursorPosY(34)
+							if imgui.Button(u8("Сохранить")) then
+								if getDownKeysText() ~= "None" then
+									binder_text[2].v = getDownKeysText()
+									is_changeact = true
+								else
+									sampAddChatMessage("Зажмите клавишу/клавиши, после чего повторите попытку")
+								end
+							end
+						else
+							imgui.Text(u8"Активация: /")
+							imgui.SameLine()
+							imgui.PushItemWidth(100)
+							imgui.SetCursorPos(imgui.ImVec2(90, 26))
+							imgui.InputText(u8"##1", binder_text[2])
+							imgui.SameLine()
+							if imgui.Button(u8"Сохранить") then
+								if isReservedCommand(binder_text[2].v) then
+									sampAddChatMessage("Введенная вами команда является зарезервированной скриптом. Придумайте другую")
+								else
+									if string.find(binder_text[2].v, '/', 1, true) then
+										sampAddChatMessage('Знак "/" будет прикреплен к команде позже. В данный момент он не нужен')
+									else
+										is_changeact = true
+										binder_text[2].v = "/" .. binder_text[2].v
+									end
+								end
+							end
+						end
+
+					else
+						imgui.SetCursorPosY(30)
+						imgui.Text(u8"Активация:")
+						imgui.SameLine()
+						imgui.SetCursorPosY(30)
+						imgui.TextColored(imgui.ImVec4(0.4, 0.8, 0.3, 1.0), binder_text[2].v)
+						imgui.SameLine()
+						imgui.SetCursorPosY(28)
+						if imgui.Button(u8("Изменить активацию")) then
+							imgui.OpenPopup("ChangeActivation")
+						end
+					end
+
+					if (imgui.BeginPopup("ChangeActivation")) then
+						imgui.Text(u8"Выберите нужную вам активацию для (Слот №" .. z .. ")")
+						imgui.PushItemWidth(240)
+						imgui.SetCursorPosX(30)
+						imgui.Combo("", selected_item_binder, u8"На клавишу (комбинацию клавиш)\0На команду (прим. /command)\0\0")
+						imgui.SetCursorPosX(85)
+						if imgui.Button(u8"Выбрать") then
+							if selected_item_binder.v == 1 then
+								if binder_text[2].v ~= "" then
+									if string.find(binder_text[2].v, '/', 1, true) then
+										binder_text[2].v = string.sub(binder_text[2].v, 2)
+									else
+										binder_text[2].v = ""
+									end
+								end
+							end
+							is_changeact = false
+							imgui.CloseCurrentPopup()
+						end
+						imgui.SameLine()
+						imgui.SetCursorPosX(155)
+						if imgui.Button(u8"Закрыть") then
+							imgui.CloseCurrentPopup()
+						end
+						imgui.EndPopup()
+					end
+
+					imgui.Text(u8"Задержка:")
+					imgui.SameLine()
+					imgui.PushItemWidth(50)
+					imgui.InputText(u8'сек.', binder_text[3], imgui.InputTextFlags.CharsDecimal)
+					imgui.SameLine()
+					if imgui.Checkbox(u8"Блокировка движений персонажа", cb_lock_player) then
+						imgui.LockPlayer = cb_lock_player.v
+					end
+					imgui.Separator()
+					ShowCenterTextColor(u8("Вводимый текст биндера (для переноса строки нажать Enter)"), wmine-200, imgui.ImVec4(0.8, 0.7, 0.1, 1.0))
+					imgui.InputTextMultiline(u8'##3', binder_text[1], imgui.ImVec2(500, 178))
+					imgui.SetCursorPosX(120)
+					if imgui.Button(u8("Сохранить"), imgui.ImVec2(120, 25)) then
+						if binder_text[3].v == "" then
+							binder_text[3].v = 0
+						end
+						if binder_text[1].v == "" or binder_text[2].v == "" then
+							sampAddChatMessage("Заполните все поля!")
+						else
+							for i = 1, 30 do
+								if main_binder[change_binder] ~= nil then
+									if main_binder[change_binder][i] ~= nil then
+										main_binder[change_binder][i] = nil
+									else
+										break
+									end
+								else
+									break
+								end
+							end
+							i = 0
+							for s in string.gmatch(binder_text[1].v, "[^\r\n]+") do
+								i = i + 1
+								if main_binder[change_binder] == nil then
+									main_binder[change_binder] = {}
+								end
+								main_binder[change_binder][i] = s
+							end
+							main_binder[change_binder].act = binder_text[2].v
+							main_binder[change_binder].wait = binder_text[3].v
+							inicfg.save(main_binder, bind_path)
+							sampAddChatMessage("Данные биндера успешно сохранены!")
+						end
+					end
+					imgui.SameLine()
+					imgui.SetCursorPosX(260)
+					if imgui.Button(u8("Отмена"), imgui.ImVec2(120, 25)) then
+						change_binder = ""
+					end
+				imgui.EndChild()
+			else
+				imgui.BeginChild("other", imgui.ImVec2(665, 400), true)
+				imgui.Text(u8"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tАктивация скрипта")
+				
+				imgui.BeginChild("change", imgui.ImVec2(118, 20), true)
+				imgui.SetCursorPosY(2)
+				imgui.TextColored(imgui.ImVec4(1.0, 1.0, 0.7, 1.0), getDownKeysText())
+				imgui.EndChild()
+				imgui.SameLine()
+				imgui.SetCursorPosY(37)
+				imgui.Text(u8"Зажмите клавишу/комбинацию клавиш и нажмите")
+				imgui.SameLine()
+				imgui.SetCursorPosY(34)
+				if imgui.Button(u8("Сохранить")) then
+					if getDownKeysText() ~= "None" then
+						load_settings.settings_script.activate_script = getDownKeysText()
+						inicfg.save(load_settings)
+					else
+						sampAddChatMessage("Зажмите клавишу/клавиши, после чего повторите попытку")
+					end
+				end
+				
+				--imgui.PushItemWidth(50) 
+				--imgui.InputText(u8'Код кнопки активации', text_buffer)
+				--imgui.PopItemWidth()
+				
+				--if imgui.Button(u8"Применить", imgui.ImVec2(77, 0)) then
+				--	load_settings.settings_script.activate_script = u8:decode(text_buffer.v)
+				--	inicfg.save(load_settings)
+				--end
+				
+				imgui.Columns(2, "mycolumns")
+				imgui.Separator()
+				imgui.Text(u8"Активация") ShowHelpMarker("Двойной щелчок по пункту открывает\nнастройку редактора биндера") imgui.NextColumn()
+				imgui.Text(u8"Статус") imgui.NextColumn()
+				imgui.Separator()
+				for i = 1, bind_slot do
+					if imgui.Selectable(u8"Слот №" .. i, false, imgui.SelectableFlags.AllowDoubleClick) then
+						if (imgui.IsMouseDoubleClicked(0)) then
+							z = i
+							if main_binder[i] == nil then
+								imgui.OpenPopup("SetActivation")
+							else
+								imgui.OpenPopup("ReActivation")
+							end
+						end
+					end
+					imgui.NextColumn()
+					if main_binder[i] ~= nil and main_binder[i].wait ~= nil and main_binder[i].act ~= nil then
+						if change_binder == i and change_binder ~= nil and change_binder ~= "" then
+							imgui.TextColored(imgui.ImVec4(0.4, 0.8, 0.8, 1.0), u8"Ред. | Занято")
+						else
+							imgui.TextColored(imgui.ImVec4(0.8, 0.7, 0.1, 1.0), main_binder[i].act) --u8"Занято"
+							about_bind[i] = true
+						end
+					else
+						if change_binder == i and change_binder ~= nil and change_binder ~= "" then
+							imgui.TextColored(imgui.ImVec4(0.4, 0.8, 0.8, 1.0), u8"Редактируется")
+						else
+							imgui.TextColored(imgui.ImVec4(0.4, 0.8, 0.3, 1.0), u8"Cвободно")
+							about_bind[i] = false
+						end
+					end
+					imgui.NextColumn()
+				end
+				
+				if imgui.BeginPopup("SetActivation") then
+					imgui.Text(u8"Выберите нужную вам активацию для (Слот №" .. z .. ")")
+					imgui.PushItemWidth(240)
+					imgui.SetCursorPosX(30)
+					imgui.Combo("", selected_item_binder, u8"На клавишу (комбинацию клавиш)\0На команду (прим. /command)\0\0")
+					imgui.SetCursorPosX(85)
+					if imgui.Button(u8"Выбрать") then
+						change_binder = z
+						binder_text[1].v = ""
+						is_changeact = false
+						if about_bind[z] then
+							binder_text[2].v = main_binder[z].act
+							binder_text[3].v = main_binder[z].wait
+							for g = 1, 30 do
+								if main_binder[z][g] == nil then
+									break
+								else
+									if g == 1 then
+										binder_text[1].v = main_binder[z][g]
+									else
+										binder_text[1].v = binder_text[1].v .. "\n" .. main_binder[z][g]
+									end
+								end
+							end
+						else
+							binder_text[2].v = ""
+							binder_text[3].v = ""
+						end
+
+						imgui.CloseCurrentPopup()
+					end
+					imgui.SameLine()
+					imgui.SetCursorPosX(155)
+					if imgui.Button(u8"Закрыть") then
+						imgui.CloseCurrentPopup()
+					end
+					imgui.EndPopup()
+				end
+				
+				if imgui.BeginPopup("ReActivation") then
+					imgui.Text(u8"Выберите нужное действие для (Слот №" .. z .. ")")
+					imgui.SetCursorPosX(20)
+					if imgui.Button(u8"Удалить") then
+						for i = 1, 30 do
+							main_binder[z][i] = nil
+						end
+						main_binder[z].act = nil
+						main_binder[z].wait = nil
+						main_binder[z] = nil
+						inicfg.save(main_binder, bind_path)
+						imgui.CloseCurrentPopup()
+					end
+					imgui.SameLine()
+					if imgui.Button(u8"Редактировать") then
+						change_binder = z
+						is_changeact = true
+						binder_text[2].v = main_binder[z].act
+						binder_text[3].v = main_binder[z].wait
+						for g = 1, 30 do
+							if main_binder[z][g] == nil then
+								break
+							else
+								if g == 1 then
+									binder_text[1].v = main_binder[z][g]
+								else
+									binder_text[1].v = binder_text[1].v .. "\n" .. main_binder[z][g]
+								end
+							end
+						end
+						imgui.CloseCurrentPopup()
+					end
+					imgui.SameLine()
+					if imgui.Button(u8"Закрыть") then
+						imgui.CloseCurrentPopup()
+					end
+					imgui.EndPopup()
+				end
+				imgui.EndChild()
+			end
+		end
+		
+		imgui.SameLine()
+		if menu == 3 then
+			imgui.BeginChild("other", imgui.ImVec2(665, 400), true)
+			imgui.Text("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tAzRP - Helper by Sad_Flores")
+			imgui.Text(u8'\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tВерсия: '.. thisScript().version ..'')
+			imgui.Text(u8"1.1(1.3.b). Был удален раздел: Центральный рынок все его функции перенесены в основной раздел.")
+			imgui.Text(u8"1.2(1.3.b). Переписан функционал удаление транспорта и игроков пакеты блокируются а не удаляются.")
+			imgui.Text(u8"1.3(1.3.b). Переписана функция BufferCleaner, утечка памяти пофикшена.")
+			imgui.Text(u8"1.4(1.3.b). Было принято решение оставить код открытым для изучания его новичками.")
+			imgui.Text(u8"1.5(1.3.b). Добавлено автообновление(спасибо Orlik).")
+			imgui.Text(u8"1.6(1.4.b). Добавлена система AutoEat(чипсы, оленина).")
+			imgui.Text(u8"1.7(1.4.b). Добавлена смена кнопок активации(Коды клавиш ищи в гугле).")
+			imgui.Text(u8"1.8(1.4.b). Добавлена полоска снизу с мониторингом используемых функций.")
+			imgui.Text(u8"1.9(1.4.b). Исправлены координаты появиления меню(Было сверху - Стало по центру).")
+			imgui.Text(u8"2.0(1.5.b). Добавлена система AutoLogin(+Google Auth).")
+			imgui.Text(u8"2.1(1.6.b). Добавлен универсальный биндер.")
+			imgui.Text(u8"2.2(1.6.b). Изменена логика выбора кнопок активации(Долой гуглить hex-code).")
+			imgui.Text(u8"2.3(1.6.b). Добавлена возможность изменения статуса инфобара.")
+			imgui.Text(u8"2.4(1.7.R). Исправлены критические баги, исправлена работа функционала.")
+			imgui.Text(u8"2.4(1.7.R). Скрипту присвоен статус R(Release), что значит об окончании бета-тестирования.")
+			imgui.Text(u8"2.5(1.8.R). Важное обновление, пофиксил AutoLogin, теперь не кикает.")
+			imgui.EndChild()
+		end
+		
+		imgui.End()
+	end
+end
+
+local auto_login_accept = false
+
+function sampev.onShowDialog(id, style, title, button1, button2, text)
+	if load_settings.auto_login.passwd ~= 0 or load_settings.auto_login.google ~= 0 and auto_login_accept == true then
+		if id == 2 then
+			sampSendDialogResponse(id, 1, 0, u8:decode(load_settings.auto_login.passwd))
+			return false
+		end
+		if id == 8929 and load_settings.auto_login.google ~= 0 then
+			if load_settings.auto_login.google == 0 then return end
+			local result, output = pcall(genCode, load_settings.auto_login.google)
+			if result then
+				sampSendDialogResponse(id, 1, 0, output)
+				return false
+			else
+				print(u8:decode('GAuth код невалидный, либо не указан.'))
+			end
+			return false
+		end
+	end
+end
+
+function sampev.onServerMessage(color, text)
+  if load_settings.auto_login.passwd ~= nil and color == -1347440641 and text == u8:decode('{ffffff}С возвращением, вы успешно вошли в свой аккаунт.') then
+    lua_thread.create(function()
+      wait(500)
+      sampSpawnPlayer()
+    end)
+  end
+end
+
+function sampev.onDisplayGameText(style, time, text)
+	if load_settings.settings.auto_eat then
+		if text:find('You are hungry!') or text:find('You are very hungry!') then
+			sampSendChat('/jmeat')
+			sampSendChat('/cheeps')
+		end
+	end
+end
+
+
+function thread_function(option)
+	if string.sub(option, 0, 6) == "binder" then
+		ind = tonumber(string.sub(option, 7))
+		for i = 1, 30 do
+			if main_binder[ind][i] ~= nil then
+				if main_binder[ind][i] == "" then
+					sampsampAddChatMessage("[Binder | Warning]: Обнаружена пустая строка", -1)
+				else
+					sampSendChat(u8:decode(main_binder[ind][i]))
+					wait(tonumber(main_binder[ind].wait .. "000"))
+				end
+			else
+				return
+			end
+		end
+		return
+	end
+end
+
+function string.split(inputstr, sep)
+    if sep == nil then
+            sep = "%s"
+    end
+    local t={} ; i=1
+    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+            t[i] = str
+            i = i + 1
+    end
+    return t
+end
+
+function strToIdKeys(str)
+	tKeys = string.split(str, "+")
+	if #tKeys ~= 0 then
+		for i = 1, #tKeys do
+			if i == 1 then
+				str = key.name_to_id(tKeys[i], false)
+			else
+				str = str .. " " .. key.name_to_id(tKeys[i], false)
+			end
+		end
+		return tostring(str)
+	else
+		return "(("
+	end
+end
+
+function isKeysDown(keylist, pressed)
+    local tKeys = string.split(keylist, " ")
+    if pressed == nil then
+        pressed = false
+    end
+    if tKeys[1] == nil then
+        return false
+    end
+    local bool = false
+    local key = #tKeys < 2 and tonumber(tKeys[1]) or tonumber(tKeys[2])
+    local modified = tonumber(tKeys[1])
+    if #tKeys < 2 then
+        if not isKeyDown(VK_RMENU) and not isKeyDown(VK_LMENU) and not isKeyDown(VK_LSHIFT) and not isKeyDown(VK_RSHIFT) and not isKeyDown(VK_LCONTROL) and not isKeyDown(VK_RCONTROL) then
+            if wasKeyPressed(key) and not pressed then
+                bool = true
+            elseif isKeyDown(key) and pressed then
+                bool = true
+            end
+        end
+    else
+        if isKeyDown(modified) and not wasKeyReleased(modified) then
+            if wasKeyPressed(key) and not pressed then
+                bool = true
+            elseif isKeyDown(key) and pressed then
+                bool = true
+            end
+        end
+    end
+    if nextLockKey == keylist then
+        if pressed and not wasKeyReleased(key) then
+            bool = false
+        else
+            bool = false
+            nextLockKey = ""
+        end
+    end
+    return bool
+end
+
+function main()
+	while not isSampAvailable() do wait(0) end
+	
+	local ip, port = sampGetCurrentServerAddress()
+	for i = 0, 9 do
+		 if load_settings.auto_login.ip == ip then
+			auto_login_accept = true
+		 end
+	end
+	
+	font = renderCreateFont('Verdana', 10, 9)
+	local file_path = getWorkingDirectory() .. '/ARZ_Assistant_Custom_Tab.lua'
+	if doesFileExist(file_path) == true then
+		new_tab_active = imgui.ImBool(true)
+		tab_downloading = false
+	elseif doesFileExist(file_path) == false then
+		new_tab_active = imgui.ImBool(false)
+		tab_downloading = true
+	end
+	
+	thread = lua_thread.create_suspended(thread_function)
+	inicfg.save(load_settings)
+	
+	local time = os.clock() + 300
+	while true do
+		-- ВКЛЮЧЕНИЕ ФУНКЦИОНАЛА СКРИПТА
+		if load_settings.settings.fast_connect_active then    --Фастконнект
+			memory.fill(sampGetBase() + 0x2D3C45, 0, 0, true)
+		end
+		if load_settings.settings.anti_afk_active then		  --антиафк
+			writeMemory(7634870, 1, 1, 1)
+			writeMemory(7635034, 1, 1, 1)
+			memory.fill(7623723, 144, 8)
+			memory.fill(5499528, 144, 6)
+		end
+		--
+		for i = 1, bind_slot do
+			if main_binder[i] ~= nil then
+				if main_binder[i].act ~= nil and not string.find(main_binder[i].act, "/", 1, true) then
+					if isKeysDown(strToIdKeys(main_binder[i].act)) then
+						thread:run("binder" .. i)
+					end
+				end
+			end
+		end
+		if time < os.clock() then
+			autoupdate("https://raw.githubusercontent.com/K1NDER-ai/AzRPHelper/master/version.json", '['..string.upper(thisScript().name)..']: ', "https://raw.githubusercontent.com/K1NDER-ai/AzRPHelper/master/version.json")
+			time = os.clock() + 300
+			
+			if load_settings.settings.buffer_cleaner_active == true and memory.read(0x8E4CB4, 4, true) > 314572800 then
+				local cln1 = callFunction(0x53C500, 2, 2, true, true)
+				local cln2 = callFunction(0x53C810, 1, 1, true)
+				local cln3 = callFunction(0x53BED0, 0, 0)
+				local cln4 = callFunction(0x40CF80, 0, 0)
+				local cln5 = callFunction(0x53C440, 0, 0)
+				local cln6 = callFunction(0x707770, 0, 0)
+				local cln7 = callFunction(0x5A18B0, 0, 0)
+				local cln8 = callFunction(0x53C4A0, 0, 0)
+				local cln9 = callFunction(0x53C240, 0, 0)
+				local cln10 = callFunction(0x4090A0, 0, 0)
+				local cln11 = callFunction(0x409760, 0, 0)
+				local cln12 = callFunction(0x409210, 0, 0)
+				local cln13 = callFunction(0x40D7C0, 1, 1, -1)
+				local cln14 = callFunction(0x40E4E0, 0, 0)
+				local cln15 = callFunction(0x70C950, 0, 0)
+				local cln16 = callFunction(0x408CB0, 0, 0)
+				local cln17 = callFunction(0x40E460, 0, 0)
+				local cln18 = callFunction(0x407A10, 0, 0)
+				local cln19 = callFunction(0x40B3A0, 0, 0)
+				local detectX, detectY, detectZ = getCharCoordinates(PLAYER_PED)
+				requestCollision(detectX, detectY)
+				loadScene(detectX, detectY, detectZ)
+			end
+		end
+		
+		wait(0)
+		if isKeysDown(strToIdKeys(load_settings.settings_script.activate_script)) and not sampIsChatInputActive() and not sampIsDialogActive() and not isPauseMenuActive() and not isSampfuncsConsoleActive() then
+			main_window_state.v = not main_window_state.v
+		end
+		imgui.Process = main_window_state.v
+		main_draw_box()
+	end
+end
+
+local function patch()
+	if load_settings.settings.fast_load_active == true then
+		if memory.getuint8(0x748C2B) == 0xE8 then
+			memory.fill(0x748C2B, 0x90, 5, true)
+		elseif memory.getuint8(0x748C7B) == 0xE8 then
+			memory.fill(0x748C7B, 0x90, 5, true)
+		end
+		if memory.getuint8(0x5909AA) == 0xBE then
+			memory.write(0x5909AB, 1, 1, true)
+		end
+		if memory.getuint8(0x590A1D) == 0xBE then
+			memory.write(0x590A1D, 0xE9, 1, true)
+			memory.write(0x590A1E, 0x8D, 4, true)
+		end
+		if memory.getuint8(0x748C6B) == 0xC6 then
+			memory.fill(0x748C6B, 0x90, 7, true)
+		elseif memory.getuint8(0x748CBB) == 0xC6 then
+			memory.fill(0x748CBB, 0x90, 7, true)
+		end
+		if memory.getuint8(0x590AF0) == 0xA1 then
+			memory.write(0x590AF0, 0xE9, 1, true)
+			memory.write(0x590AF1, 0x140, 4, true)
+		end
+	end
+end
+
+patch()
+
+function onReceiveRpc(id,bs)
+    if sampIsLocalPlayerSpawned() then 
+		local model = raknetBitStreamReadInt32(bs)
+
+		if filt(model) and central_del_car == true then 
+			count_delete_obj = count_delete_obj + 1
+			return false 
+		end
+		if id == 91 and load_settings.settings.tuning_fix_active == true then
+			local handle = storeCarCharIsInNoSave(playerPed)
+			if handle > 0 then
+				local RPC = ReadRPC(bs)
+				local pint = getCarPointer(handle)
+				if memory.getfloat(pint + 0x49C) == 0 and memory.getfloat(pint + 0x4A0) == 0 then
+					return false
+				end
+				local distance = math.abs(math.sqrt(RPC.x ^ 2 + RPC.y ^ 2 + RPC.z ^ 2))
+				local vx,vy,vz = getCarSpeedVector(handle)
+				if vx ~= 0 and vy ~= 0 and vz ~= 0 then
+					local fAngle = math.deg(math.atan2(vy - RPC.y, vx - RPC.x))
+					local fAngle = tonumber(string.format("%.2f",(fAngle < 0 and 360 - math.abs(fAngle) or fAngle)))
+					local sAngle = (getCarHeading(handle) + 90)
+					local sAngle = tonumber(string.format("%.2f",(sAngle > 360 and sAngle - 360 or sAngle)))
+					if (sAngle - 12) <= fAngle and (sAngle + 12) >= fAngle then
+						k = distance / math.sqrt((vx ^ 2) + (vy ^ 2) + (vz ^ 2))
+						return WriteRPC({x = vx * k,y = vy * k,z = vz * k})
+					end
+				end
+				return false
+			end
+		end
+    end
+end
+
+function ReadRPC(bs)
+    raknetBitStreamSetReadOffset(bs, 8)
+    return {
+        x = raknetBitStreamReadFloat(bs),
+        y = raknetBitStreamReadFloat(bs),
+        z = raknetBitStreamReadFloat(bs)
+    }
+end
+
+function WriteRPC(velocity)
+    local bs = raknetNewBitStream()
+    raknetBitStreamWriteBool(bs,false)
+    raknetBitStreamWriteFloat(bs,velocity.x)
+    raknetBitStreamWriteFloat(bs,velocity.y)
+    raknetBitStreamWriteFloat(bs,velocity.z)
+    return bs
+end
+
+function FIND(model, values)
+    for k, v in pairs(mapp[values]) do
+        if model == v then 
+            return true 
+        end
+    end
+    return false
+end
+
+function filt(model)
+	if central_del_car == true then
+		FIND(model, "Тюнинг") 
+	end
+    return false
+end
+
+function sampev.onVehicleStreamIn(vehicleId, data)
+	if central_del_car == true then
+		return false
+	end
+end
+
+function sampev.onPlayerStreamIn(playerId, team, model, position, rotation, color, fightingStyle)
+	infnpc[playerId] = 
+	{ 
+		team, 
+		model, 
+		position, 
+		rotation, 
+		color, 
+		fightingStyle 
+	}
+	npc[#npc + 1] = playerId
+	if central_del_player == true then
+		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+		
+		if playerId ~= myid and position == myposition() then
+			sampsampAddChatMessage('{228B22}КОЛЛИЗИЯ БЛЯТЬ.', 0x228B22)
+		end
+		return false
+	end
+end
+
+function emul_rpc(hook, parameters)
+    local bs_io = require 'samp.events.bitstream_io'
+    local handler = require 'samp.events.handlers'
+    local extra_types = require 'samp.events.extra_types'
+    local hooks = {
+
+        --[[ Outgoing rpcs
+        ['onSendEnterVehicle'] = { 'int16', 'bool8', 26 },
+        ['onSendClickPlayer'] = { 'int16', 'int8', 23 },
+        ['onSendClientJoin'] = { 'int32', 'int8', 'string8', 'int32', 'string8', 'string8', 'int32', 25 },
+        ['onSendEnterEditObject'] = { 'int32', 'int16', 'int32', 'vector3d', 27 },
+        ['onSendCommand'] = { 'string32', 50 },
+        ['onSendSpawn'] = { 52 },
+        ['onSendDeathNotification'] = { 'int8', 'int16', 53 },
+        ['onSendDialogResponse'] = { 'int16', 'int8', 'int16', 'string8', 62 },
+        ['onSendClickTextDraw'] = { 'int16', 83 },
+        ['onSendVehicleTuningNotification'] = { 'int32', 'int32', 'int32', 'int32', 96 },
+        ['onSendChat'] = { 'string8', 101 },
+        ['onSendClientCheckResponse'] = { 'int8', 'int32', 'int8', 103 },
+        ['onSendVehicleDamaged'] = { 'int16', 'int32', 'int32', 'int8', 'int8', 106 },
+        ['onSendEditAttachedObject'] = { 'int32', 'int32', 'int32', 'int32', 'vector3d', 'vector3d', 'vector3d', 'int32', 'int32', 116 },
+        ['onSendEditObject'] = { 'bool', 'int16', 'int32', 'vector3d', 'vector3d', 117 },
+        ['onSendInteriorChangeNotification'] = { 'int8', 118 },
+        ['onSendMapMarker'] = { 'vector3d', 119 },
+        ['onSendRequestClass'] = { 'int32', 128 },
+        ['onSendRequestSpawn'] = { 129 },
+        ['onSendPickedUpPickup'] = { 'int32', 131 },
+        ['onSendMenuSelect'] = { 'int8', 132 },
+        ['onSendVehicleDestroyed'] = { 'int16', 136 },
+        ['onSendQuitMenu'] = { 140 },
+        ['onSendExitVehicle'] = { 'int16', 154 },
+        ['onSendUpdateScoresAndPings'] = { 155 },
+        ['onSendGiveDamage'] = { 'int16', 'float', 'int32', 'int32', 115 },
+        ['onSendTakeDamage'] = { 'int16', 'float', 'int32', 'int32', 115 },]]
+
+        -- Incoming rpcs
+        ['onInitGame'] = { 139 },
+        ['onPlayerJoin'] = { 'int16', 'int32', 'bool8', 'string8', 137 },
+        ['onPlayerQuit'] = { 'int16', 'int8', 138 },
+        ['onRequestClassResponse'] = { 'bool8', 'int8', 'int32', 'int8', 'vector3d', 'float', 'Int32Array3', 'Int32Array3', 128 },
+        ['onRequestSpawnResponse'] = { 'bool8', 129 },
+        ['onSetPlayerName'] = { 'int16', 'string8', 'bool8', 11 },
+        ['onSetPlayerPos'] = { 'vector3d', 12 },
+        ['onSetPlayerPosFindZ'] = { 'vector3d', 13 },
+        ['onSetPlayerHealth'] = { 'float', 14 },
+        ['onTogglePlayerControllable'] = { 'bool8', 15 },
+        ['onPlaySound'] = { 'int32', 'vector3d', 16 },
+        ['onSetWorldBounds'] = { 'float', 'float', 'float', 'float', 17 },
+        ['onGivePlayerMoney'] = { 'int32', 18 },
+        ['onSetPlayerFacingAngle'] = { 'float', 19 },
+        --['onResetPlayerMoney'] = { 20 },
+        --['onResetPlayerWeapons'] = { 21 },
+        ['onGivePlayerWeapon'] = { 'int32', 'int32', 22 },
+        --['onCancelEdit'] = { 28 },
+        ['onSetPlayerTime'] = { 'int8', 'int8', 29 },
+        ['onSetToggleClock'] = { 'bool8', 30 },
+        ['onPlayerStreamIn'] = { 'int16', 'int8', 'int32', 'vector3d', 'float', 'int32', 'int8', 32 },
+        ['onSetShopName'] = { 'string256', 33 },
+        ['onSetPlayerSkillLevel'] = { 'int16', 'int32', 'int16', 34 },
+        ['onSetPlayerDrunk'] = { 'int32', 35 },
+        ['onCreate3DText'] = { 'int16', 'int32', 'vector3d', 'float', 'bool8', 'int16', 'int16', 'encodedString4096', 36 },
+        --['onDisableCheckpoint'] = { 37 },
+        ['onSetRaceCheckpoint'] = { 'int8', 'vector3d', 'vector3d', 'float', 38 },
+        --['onDisableRaceCheckpoint'] = { 39 },
+        --['onGamemodeRestart'] = { 40 },
+        ['onPlayAudioStream'] = { 'string8', 'vector3d', 'float', 'bool8', 41 },
+        --['onStopAudioStream'] = { 42 },
+        ['onRemoveBuilding'] = { 'int32', 'vector3d', 'float', 43 },
+        ['onCreateObject'] = { 44 },
+        ['onSetObjectPosition'] = { 'int16', 'vector3d', 45 },
+        ['onSetObjectRotation'] = { 'int16', 'vector3d', 46 },
+        ['onDestroyObject'] = { 'int16', 47 },
+        ['onPlayerDeathNotification'] = { 'int16', 'int16', 'int8', 55 },
+        ['onSetMapIcon'] = { 'int8', 'vector3d', 'int8', 'int32', 'int8', 56 },
+        ['onRemoveVehicleComponent'] = { 'int16', 'int16', 57 },
+        ['onRemove3DTextLabel'] = { 'int16', 58 },
+        ['onPlayerChatBubble'] = { 'int16', 'int32', 'float', 'int32', 'string8', 59 },
+        ['onUpdateGlobalTimer'] = { 'int32', 60 },
+        ['onShowDialog'] = { 'int16', 'int8', 'string8', 'string8', 'string8', 'encodedString4096', 61 },
+        ['onDestroyPickup'] = { 'int32', 63 },
+        ['onLinkVehicleToInterior'] = { 'int16', 'int8', 65 },
+        ['onSetPlayerArmour'] = { 'float', 66 },
+        ['onSetPlayerArmedWeapon'] = { 'int32', 67 },
+        ['onSetSpawnInfo'] = { 'int8', 'int32', 'int8', 'vector3d', 'float', 'Int32Array3', 'Int32Array3', 68 },
+        ['onSetPlayerTeam'] = { 'int16', 'int8', 69 },
+        ['onPutPlayerInVehicle'] = { 'int16', 'int8', 70 },
+        --['onRemovePlayerFromVehicle'] = { 71 },
+        ['onSetPlayerColor'] = { 'int16', 'int32', 72 },
+        ['onDisplayGameText'] = { 'int32', 'int32', 'string32', 73 },
+        --['onForceClassSelection'] = { 74 },
+        ['onAttachObjectToPlayer'] = { 'int16', 'int16', 'vector3d', 'vector3d', 75 },
+        ['onInitMenu'] = { 76 },
+        ['onShowMenu'] = { 'int8', 77 },
+        ['onHideMenu'] = { 'int8', 78 },
+        ['onCreateExplosion'] = { 'vector3d', 'int32', 'float', 79 },
+        ['onShowPlayerNameTag'] = { 'int16', 'bool8', 80 },
+        ['onAttachCameraToObject'] = { 'int16', 81 },
+        ['onInterpolateCamera'] = { 'bool', 'vector3d', 'vector3d', 'int32', 'int8', 82 },
+        ['onGangZoneStopFlash'] = { 'int16', 85 },
+        ['onApplyPlayerAnimation'] = { 'int16', 'string8', 'string8', 'bool', 'bool', 'bool', 'bool', 'int32', 86 },
+        ['onClearPlayerAnimation'] = { 'int16', 87 },
+        ['onSetPlayerSpecialAction'] = { 'int8', 88 },
+        ['onSetPlayerFightingStyle'] = { 'int16', 'int8', 89 },
+        ['onSetPlayerVelocity'] = { 'vector3d', 90 },
+        ['onSetVehicleVelocity'] = { 'bool8', 'vector3d', 91 },
+        ['onServerMessage'] = { 'int32', 'string32', 93 },
+        ['onSetWorldTime'] = { 'int8', 94 },
+        ['onCreatePickup'] = { 'int32', 'int32', 'int32', 'vector3d', 95 },
+        ['onMoveObject'] = { 'int16', 'vector3d', 'vector3d', 'float', 'vector3d', 99 },
+        ['onEnableStuntBonus'] = { 'bool', 104 },
+        ['onTextDrawSetString'] = { 'int16', 'string16', 105 },
+        ['onSetCheckpoint'] = { 'vector3d', 'float', 107 },
+        ['onCreateGangZone'] = { 'int16', 'vector2d', 'vector2d', 'int32', 108 },
+        ['onPlayCrimeReport'] = { 'int16', 'int32', 'int32', 'int32', 'int32', 'vector3d', 112 },
+        ['onGangZoneDestroy'] = { 'int16', 120 },
+        ['onGangZoneFlash'] = { 'int16', 'int32', 121 },
+        ['onStopObject'] = { 'int16', 122 },
+        ['onSetVehicleNumberPlate'] = { 'int16', 'string8', 123 },
+        ['onTogglePlayerSpectating'] = { 'bool32', 124 },
+        ['onSpectatePlayer'] = { 'int16', 'int8', 126 },
+        ['onSpectateVehicle'] = { 'int16', 'int8', 127 },
+        ['onShowTextDraw'] = { 134 },
+        ['onSetPlayerWantedLevel'] = { 'int8', 133 },
+        ['onTextDrawHide'] = { 'int16', 135 },
+        ['onRemoveMapIcon'] = { 'int8', 144 },
+        ['onSetWeaponAmmo'] = { 'int8', 'int16', 145 },
+        ['onSetGravity'] = { 'float', 146 },
+        ['onSetVehicleHealth'] = { 'int16', 'float', 147 },
+        ['onAttachTrailerToVehicle'] = { 'int16', 'int16', 148 },
+        ['onDetachTrailerFromVehicle'] = { 'int16', 149 },
+        ['onSetWeather'] = { 'int8', 152 },
+        ['onSetPlayerSkin'] = { 'int32', 'int32', 153 },
+        ['onSetInterior'] = { 'int8', 156 },
+        ['onSetCameraPosition'] = { 'vector3d', 157 },
+        ['onSetCameraLookAt'] = { 'vector3d', 'int8', 158 },
+        ['onSetVehiclePosition'] = { 'int16', 'vector3d', 159 },
+        ['onSetVehicleAngle'] = { 'int16', 'float', 160 },
+        ['onSetVehicleParams'] = { 'int16', 'int16', 'bool8', 161 },
+        --['onSetCameraBehind'] = { 162 },
+        ['onChatMessage'] = { 'int16', 'string8', 101 },
+        ['onConnectionRejected'] = { 'int8', 130 },
+        ['onPlayerStreamOut'] = { 'int16', 163 },
+        ['onVehicleStreamIn'] = { 164 },
+        ['onVehicleStreamOut'] = { 'int16', 165 },
+        ['onPlayerDeath'] = { 'int16', 166 },
+        ['onPlayerEnterVehicle'] = { 'int16', 'int16', 'bool8', 26 },
+        ['onUpdateScoresAndPings'] = { 'PlayerScorePingMap', 155 },
+        ['onSetObjectMaterial'] = { 84 },
+        ['onSetObjectMaterialText'] = { 84 },
+        ['onSetVehicleParamsEx'] = { 'int16', 'int8', 'int8', 'int8', 'int8', 'int8', 'int8', 'int8', 'int8', 'int8', 'int8', 'int8', 'int8', 'int8', 'int8', 'int8', 'int8', 24 },
+        ['onSetPlayerAttachedObject'] = { 'int16', 'int32', 'bool', 'int32', 'int32', 'vector3d', 'vector3d', 'vector3d', 'int32', 'int32', 113 }
+
+    }
+    local handler_hook = {
+        ['onInitGame'] = true,
+        ['onCreateObject'] = true,
+        ['onInitMenu'] = true,
+        ['onShowTextDraw'] = true,
+        ['onVehicleStreamIn'] = true,
+        ['onSetObjectMaterial'] = true,
+        ['onSetObjectMaterialText'] = true
+    }
+    local extra = {
+        ['PlayerScorePingMap'] = true,
+        ['Int32Array3'] = true
+    }
+    local hook_table = hooks[hook]
+    if hook_table then
+        local bs = raknetNewBitStream()
+        if not handler_hook[hook] then
+            local max = #hook_table-1
+            if max > 0 then
+                for i = 1, max do
+                    local p = hook_table[i]
+                    if extra[p] then extra_types[p]['write'](bs, parameters[i])
+                    else bs_io[p]['write'](bs, parameters[i]) end
+                end
+            end
+        else
+            if hook == 'onInitGame' then handler.on_init_game_writer(bs, parameters)
+            elseif hook == 'onCreateObject' then handler.on_create_object_writer(bs, parameters)
+            elseif hook == 'onInitMenu' then handler.on_init_menu_writer(bs, parameters)
+            elseif hook == 'onShowTextDraw' then handler.on_show_textdraw_writer(bs, parameters)
+            elseif hook == 'onVehicleStreamIn' then handler.on_vehicle_stream_in_writer(bs, parameters)
+            elseif hook == 'onSetObjectMaterial' then handler.on_set_object_material_writer(bs, parameters, 1)
+            elseif hook == 'onSetObjectMaterialText' then handler.on_set_object_material_writer(bs, parameters, 2) end
+        end
+        raknetEmulRpcReceiveBitStream(hook_table[#hook_table], bs)
+        raknetDeleteBitStream(bs)
+    end
+end
+
+--
+--     _   _   _ _____ ___  _   _ ____  ____    _  _____ _____   ______   __   ___  ____  _     _  __
+--    / \ | | | |_   _/ _ \| | | |  _ \|  _ \  / \|_   _| ____| | __ ) \ / /  / _ \|  _ \| |   | |/ /
+--   / _ \| | | | | || | | | | | | |_) | | | |/ _ \ | | |  _|   |  _ \\ V /  | | | | |_) | |   | ' /
+--  / ___ \ |_| | | || |_| | |_| |  __/| |_| / ___ \| | | |___  | |_) || |   | |_| |  _ <| |___| . \
+-- /_/   \_\___/  |_| \___/ \___/|_|   |____/_/   \_\_| |_____| |____/ |_|    \__\_\_| \_\_____|_|\_\                                                                                                                                                                                                                  
+--
+-- Author: http://qrlk.me/samp
+--
+function autoupdate(json_url, prefix, url)
+	local dlstatus = require('moonloader').download_status
+	local json = getWorkingDirectory() .. '\\'..thisScript().name..'-version.json'
+	if doesFileExist(json) then os.remove(json) end
+	downloadUrlToFile(json_url, json,
+    function(id, status, p1, p2)
+      if status == dlstatus.STATUSEX_ENDDOWNLOAD then
+        if doesFileExist(json) then
+          local f = io.open(json, 'r')
+          if f then
+            local info = decodeJson(f:read('*a'))
+            updatelink = info.updateurl
+            updateversion = info.latest
+            f:close()
+            os.remove(json)
+            if updateversion ~= thisScript().version then
+              lua_thread.create(function(prefix)
+                local dlstatus = require('moonloader').download_status
+                local color = -1
+				notf.addNotification("Обнаружено обновление. Пытаюсь обновиться!", 4, 2)
+                wait(250)
+                downloadUrlToFile(updatelink, thisScript().path,
+                  function(id3, status1, p13, p23)
+                    if status1 == dlstatus.STATUS_DOWNLOADINGDATA then
+                      print(string.format('Загружено %d из %d.', p13, p23))
+                    elseif status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
+                      notf.addNotification("Загрузка обновления завершена!", 4, 2)
+                      goupdatestatus = true
+                      lua_thread.create(function() wait(500) thisScript():reload() end)
+                    end
+                    if status1 == dlstatus.STATUSEX_ENDDOWNLOAD then
+                      if goupdatestatus == nil then
+						notf.addNotification("Обновление прошло неудачно. Запускаю устаревшую версию.", 4, 2)
+                        update = false
+                      end
+                    end
+                  end
+                )
+                end, prefix
+              )
+            else
+              update = false
+            end
+          end
+        else
+          update = false
+        end
+      end
+    end
+  )
+  while update ~= false do wait(100) end
+end
